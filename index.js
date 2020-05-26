@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const core = require('@actions/core');
 const AWS = require('aws-sdk');
 const ecs = new AWS.ECS({ region: 'eu-central-1' });
@@ -24,6 +25,24 @@ async function updateTaskDefinition(taskDefinitionPath, environment, version) {
 
     const pathToFile = path.resolve('..', taskDefinitionPath)
     console.log('Task definition is supposed to be located at', pathToFile);
+
+    await new Promise((resolve) => {
+        fs.readdir('..', function (err, files) {
+            //handling error
+            if (err) {
+                console.log('Unable to scan directory: ' + err);
+                resolve()
+                return
+            }
+            //listing all files using forEach
+            files.forEach(function (file) {
+                // Do whatever you want to do with the file
+                console.log(file);
+            });
+            resolve()
+        });
+    })
+
     const getPreparedTaskDefinition = require(pathToFile);
 
     if (typeof getPreparedTaskDefinition !== 'function') {
