@@ -54,4 +54,9 @@ with:
   taskCount: 1
   environment: 'dev'
   taskDefinitionPath: 'ops/taskdefinition.js'
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 ```
+
+Note that you need to make sure AWS credentials are available as environment variables.
