@@ -27,7 +27,7 @@ async function updateTaskDefinition(taskDefinitionPath, environment, version) {
     console.log('Task definition is supposed to be located at', pathToFile);
 
     await new Promise((resolve) => {
-        fs.readdir('..', function (err, files) {
+        fs.readdir('../devops-github-actions-fargate-deployment', function (err, files) {
             //handling error
             if (err) {
                 console.log('Unable to scan directory: ' + err);
