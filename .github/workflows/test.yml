@@ -1,0 +1,20 @@
+on: [push]
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: Testing out the custom github action
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy to fargate action
+        uses: ./
+        with:
+          service: 'organization'
+          version: '1.0.1'
+          department: 'saas'
+          taskCount: 0
+          environment: 'local'
+          taskDefinitionPath: 'ops/taskdefinition.js'

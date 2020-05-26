@@ -1,0 +1,27 @@
+name: 'TW SaaS Fargate Deployment'
+description: 'Deploy a new version of a service to ECS Fargate'
+inputs:
+  service:
+    description: 'The name of the service to be updated, e.g. "agenda"'
+    required: true
+    default: 'World'
+  version:
+    description: 'Version of the updated service, e.g. 1.0.2'
+    required: true
+  department:
+    description: 'Specify which department is responsible for the service, e.g. "saas"'
+    required: true
+  taskCount:
+    description: 'How many tasks should run in parallel as part of the service'
+    required: true
+    default: '1'
+  environment:
+    description: 'The referenced environment for the deployment'
+    required: true
+  taskDefinitionPath:
+    description: 'Defines the location of the task definition file'
+    required: true
+    default: 'taskdefintion.js'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
