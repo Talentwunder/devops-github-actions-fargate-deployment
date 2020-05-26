@@ -20,6 +20,9 @@ function getServiceName(department, service, environment) {
 async function updateTaskDefinition(pathToFile, environment, version) {
     console.log('Trying to register new revision for task definition');
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
+
+    console.log('Task definition is supposed to be located at', pathToFile);
+    console.log('current dir', __dirname);
     const getPreparedTaskDefinition = require(pathToFile);
 
     if (typeof getPreparedTaskDefinition !== 'function') {
