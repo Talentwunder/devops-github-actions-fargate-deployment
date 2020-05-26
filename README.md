@@ -45,7 +45,7 @@ Supported values:
 
 ## Example usage
 
-```
+```yaml
 uses: actions/devops-github-actions-fargate-deployment@master
 with:
   service: 'agenda'
