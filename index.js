@@ -1,3 +1,4 @@
+const path = require('path');
 const core = require('@actions/core');
 const AWS = require('aws-sdk');
 const ecs = new AWS.ECS({ region: 'eu-central-1' });
@@ -12,17 +13,17 @@ function getServiceName(department, service, environment) {
 
 /**
  * Register the new version for the given environment
- * @param pathToFile {string} - path to task definition file
+ * @param taskDefinitionPath {string} - path to task definition file
  * @param environment {"local" | "dev" | "beta" | "prod"}
  * @param version {string}
  * @returns {Promise<ECS.TaskDefinition>}
  */
-async function updateTaskDefinition(pathToFile, environment, version) {
+async function updateTaskDefinition(taskDefinitionPath, environment, version) {
     console.log('Trying to register new revision for task definition');
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
 
+    const pathToFile = path.resolve(__dirname, taskDefinitionPath)
     console.log('Task definition is supposed to be located at', pathToFile);
-    console.log('current dir', __dirname);
     const getPreparedTaskDefinition = require(pathToFile);
 
     if (typeof getPreparedTaskDefinition !== 'function') {
