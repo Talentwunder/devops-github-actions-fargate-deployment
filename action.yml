@@ -21,7 +21,7 @@ inputs:
   taskDefinitionPath:
     description: 'Defines the location of the task definition file'
     required: true
-    default: 'taskdefintion.js'
+    default: 'ops/taskdefinition.js'
 runs:
   using: 'node12'
   main: 'dist/index.js'

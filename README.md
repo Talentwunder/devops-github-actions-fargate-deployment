@@ -37,7 +37,7 @@ Supported values:
  ### `taskDefinitionPath`
  
  **Required** Defines the location of the task definition file.
- Defaults to `taskdefintion.js`.
+ Defaults to `ops/taskdefintion.js`.
  
  This file must contain a default export with a function that accepts two parameters:
  - environment {"local" | "dev" | "beta" | "prod"}
