@@ -46,7 +46,7 @@ Supported values:
 ## Example usage
 
 ```yaml
-uses: actions/devops-github-actions-fargate-deployment@master
+uses: Talentwunder/devops-github-actions-fargate-deployment@v1
 with:
   service: 'agenda'
   version: '1.0.2'
