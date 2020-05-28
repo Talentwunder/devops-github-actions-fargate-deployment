@@ -16,6 +16,15 @@ async function run() {
 
         const shouldDeployLocal = environment === 'dev' && withLocal;
 
+        console.log('Input Parameters');
+        console.log('Service:\t', service);
+        console.log('Version:\t', version);
+        console.log('Department:\t', department);
+        console.log('Task Count:\t', taskCount);
+        console.log('Environment:\t', environment);
+        console.log('withLocal:\t', withLocal);
+        console.log('\n\n');
+
         await deployToECR({ department, service, environment, version });
         await deployToFargate({ service, department, version, taskCount, environment })
 
