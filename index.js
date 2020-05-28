@@ -31,7 +31,7 @@ async function run() {
         if (shouldDeployLocal) {
             console.log('\n\n\n', 'DEPLOYING FOR LOCAL ENVIRONMENT AS WELL');
             await deployToECR({ department, service, environment, version: 'local' });
-            await deployToFargate({ service, department, version, taskCount: 1, environment })
+            await deployToFargate({ service, department, version: 'local', taskCount: 1, environment })
         }
     } catch (e) {
         core.setFailed(e.message);
