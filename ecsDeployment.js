@@ -81,7 +81,6 @@ async function updateService({
  * @param department {"saas" | "ai"}
  * @param environment {"local" | "dev" | "beta" | "prod"}
  * @param taskCount {number} - how many tasks of a service should run in parallel
- * @param taskDefinitionPath {string} - where the taskdefinition.js file is located
  * @return {Promise<void>}
  */
 exports.deployToFargate = async function({
