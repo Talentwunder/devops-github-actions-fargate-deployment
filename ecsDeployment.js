@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
 const { ECS } = require('aws-sdk');
 const ecs = new ECS({ region: 'eu-central-1' });
 
@@ -13,21 +13,21 @@ function getServiceName(department, service, environment) {
 
 /**
  * Register the new version for the given environment
+ * @param taskDefinitionPath {string}
  * @param environment {"local" | "dev" | "beta" | "prod"}
  * @param version {string}
  * @returns {Promise<ECS.TaskDefinition>}
  */
-async function updateTaskDefinition(environment, version) {
-    const taskDefinitionLocation = 'taskdefinition.js';
+async function updateTaskDefinition(taskDefinitionPath, environment, version) {
     console.log('Trying to register new revision for task definition');
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
 
-    const pathToFile = path.resolve(taskDefinitionLocation)
+    const pathToFile = path.resolve(taskDefinitionPath);
     console.log('Looking for task definition at: ', pathToFile);
     const getPreparedTaskDefinition = require(pathToFile);
 
     if (typeof getPreparedTaskDefinition !== 'function') {
-        throw new Error('Path to the task definition file must reference a file that default exports a function.')
+        throw new Error('Path to the task definition file must reference a file that default exports a function.');
     }
 
     const params = getPreparedTaskDefinition(environment, version);
@@ -82,15 +82,17 @@ async function updateService({
  * @param department {"saas" | "ai"}
  * @param environment {"local" | "dev" | "beta" | "prod"}
  * @param taskCount {number} - how many tasks of a service should run in parallel
+ * @param taskDefinitionPath {string}
  * @return {Promise<void>}
  */
-exports.deployToFargate = async function({
-                          service,
-                          version,
-                          department,
-                          environment,
-                          taskCount
-                      }) {
+exports.deployToFargate = async function ({
+                                              service,
+                                              version,
+                                              department,
+                                              environment,
+                                              taskCount,
+                                              taskDefinitionPath,
+                                          }) {
 
     console.log('Initiating deployment to fargate...');
     console.log('Department:', department);
@@ -98,7 +100,7 @@ exports.deployToFargate = async function({
     console.log('Version:', version);
     console.log(`Environment for service "${service}" is "${environment}" with version "${version}"`);
 
-    const taskDefinition = await updateTaskDefinition(environment, version);
+    const taskDefinition = await updateTaskDefinition(taskDefinitionPath, environment, version);
     await updateService({
         department,
         service,
@@ -107,4 +109,4 @@ exports.deployToFargate = async function({
         updatedTaskDefinition: taskDefinition,
         taskCount,
     });
-}
+};

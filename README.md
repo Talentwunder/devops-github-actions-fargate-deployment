@@ -50,6 +50,10 @@ Supported values:
  
  **Required** Defines whether a local image should also be tagged in the dev environment. Defaults to `true`.
 
+### `taskDefinitionPath`
+ 
+ **Required** Defines where the task definition file is located. Defaults to .`taskdefinition.js`
+
 ## Example usage
 
 ```yaml

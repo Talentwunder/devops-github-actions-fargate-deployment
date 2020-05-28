@@ -22,6 +22,10 @@ inputs:
     description: 'Defines whether a local image should also be tagged in the dev environment'
     required: true
     default: 'true'
+  taskDefinitionPath:
+    description: 'Defines where the task definition is located'
+    required: true
+    default: 'taskdefinition.js'
 runs:
   using: 'node12'
   main: 'dist/index.js'

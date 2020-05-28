@@ -10,6 +10,7 @@ async function run() {
         const taskCountString = core.getInput('taskCount');
         const environment = core.getInput('environment');
         const withLocalString = core.getInput('withLocal');
+        const taskDefinitionPath = core.getInput('taskDefinitionPath');
 
         const taskCount = Number(taskCountString);
         const withLocal = withLocalString === 'true' || withLocalString === true;
@@ -23,15 +24,16 @@ async function run() {
         console.log('Task Count:\t', taskCount);
         console.log('Environment:\t', environment);
         console.log('withLocal:\t', withLocal);
+        console.log('Task definition path: ', taskDefinitionPath);
         console.log('\n\n');
 
         await deployToECR({ department, service, environment, version });
-        await deployToFargate({ service, department, version, taskCount, environment })
+        await deployToFargate({ service, department, version, taskCount, environment, taskDefinitionPath })
 
         if (shouldDeployLocal) {
             console.log('\n\n\n', 'DEPLOYING FOR LOCAL ENVIRONMENT AS WELL');
             await deployToECR({ department, service, environment, version: 'local' });
-            await deployToFargate({ service, department, version: 'local', taskCount: 1, environment })
+            await deployToFargate({ service, department, version: 'local', taskCount: 1, environment, taskDefinitionPath })
         }
     } catch (e) {
         core.setFailed(e.message);
