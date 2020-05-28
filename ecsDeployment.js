@@ -18,10 +18,11 @@ function getServiceName(department, service, environment) {
  * @returns {Promise<ECS.TaskDefinition>}
  */
 async function updateTaskDefinition(environment, version) {
+    const taskDefinitionLocation = 'taskdefinition.js';
     console.log('Trying to register new revision for task definition');
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
 
-    const pathToFile = path.join(path.resolve('taskdefinition.js'), '..', '..', 'taskdefinition.js')
+    const pathToFile = path.resolve(taskDefinitionLocation)
     console.log('Looking for task definition at: ', pathToFile);
     const getPreparedTaskDefinition = require(pathToFile);
 
