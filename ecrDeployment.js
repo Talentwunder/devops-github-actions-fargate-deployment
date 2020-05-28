@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const exec = require('@actions/exec');
 
 const ACCOUNT_NUMBER = process.env.AWS_ACCOUNT_NUMBER;
