@@ -22,6 +22,7 @@ async function updateTaskDefinition(environment, version) {
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
 
     const pathToFile = path.resolve('ops/taskdefinition.js')
+    console.log('Looking for task definition at: ', pathToFile);
     const getPreparedTaskDefinition = require(pathToFile);
 
     if (typeof getPreparedTaskDefinition !== 'function') {
