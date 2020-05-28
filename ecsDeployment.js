@@ -31,6 +31,12 @@ async function updateTaskDefinition(taskDefinitionPath, environment, version) {
     }
 
     const params = getPreparedTaskDefinition(environment, version);
+
+    // local environment uses dev ECR repository
+    if (environment === 'local') {
+        params.containerDefinitions[0].image = params.containerDefinitions[0].image.replace('-local', '-dev')
+    }
+
     console.log('Revised task definition to be set looks like', JSON.stringify(params, undefined, 2));
     const { taskDefinition } = await ecs.registerTaskDefinition(params)
         .promise();
