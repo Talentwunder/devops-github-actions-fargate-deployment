@@ -1,7 +1,19 @@
 # TW Fargate Deployment GitHub Action 
 
-This action updates the task definition for a given service and additionally
-triggers a new deployment to the affected service. 
+This action updates includes the following steps:
+- building, tagging and pushing a docker image to ECR for the specified service
+- update the provided task definition and re-deploy the specified service with it
+triggers a new deployment to the affected service.
+
+**Prerequisites**: There needs to be a `taskdefinition.js` file in the root of the repository.
+This file must contain a default export with a function that accepts two parameters:
+- environment `{ "local" | "dev" | "beta" | "prod"}`
+- version `{string}`
+    
+Also, you need to make sure the following environment variables
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_ACCOUNT_NUMBER`
 
 ## Inputs
 
@@ -34,14 +46,9 @@ Supported values:
  - `beta`
  - `prod`
  
- ### `taskDefinitionPath`
+ ### `withLocal`
  
- **Required** Defines the location of the task definition file.
- Defaults to `ops/taskdefintion.js`.
- 
- This file must contain a default export with a function that accepts two parameters:
- - environment {"local" | "dev" | "beta" | "prod"}
- - version {string}
+ **Required** Defines whether a local image should also be tagged in the dev environment. Defaults to `true`.
 
 ## Example usage
 
@@ -50,13 +57,12 @@ uses: Talentwunder/devops-github-actions-fargate-deployment@v1
 with:
   service: 'agenda'
   version: '1.0.2'
+  environment: 'dev'
   department: 'saas'
   taskCount: 1
-  environment: 'dev'
-  taskDefinitionPath: 'ops/taskdefinition.js'
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
 ```
 
-Note that you need to make sure AWS credentials are available as environment variables.

@@ -18,10 +18,10 @@ inputs:
   environment:
     description: 'The referenced environment for the deployment'
     required: true
-  taskDefinitionPath:
-    description: 'Defines the location of the task definition file'
+  withLocal:
+    description: 'Defines whether a local image should also be tagged in the dev environment'
     required: true
-    default: 'ops/taskdefinition.js'
+    default: 'true'
 runs:
   using: 'node12'
   main: 'dist/index.js'
