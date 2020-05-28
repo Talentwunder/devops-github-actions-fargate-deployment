@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs')
 const { ECS } = require('aws-sdk');
 const ecs = new ECS({ region: 'eu-central-1' });
 
@@ -20,9 +21,43 @@ async function updateTaskDefinition(environment, version) {
     console.log('Trying to register new revision for task definition');
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
 
-    const pathToFile = './taskdefinition.js'
-    console.log('Task definition is supposed to be located at', pathToFile);
+    const pathToFile = path.resolve('taskdefinition.js')
 
+    try {
+        const pathToFile = path.resolve('/taskdefinition.js');
+        console.log(pathToFile);
+        const getPreparedTaskDefinition = require(pathToFile);
+        console.log('working');
+    } catch (e) {
+        console.log('not working');
+    }
+
+    try {
+        const pathToSecondFile = path.resolve('taskdefinition.js');
+        console.log(pathToSecondFile);
+        const getPreparedTaskDefinition = require(pathToSecondFile);
+        console.log('working');
+    } catch (e) {
+        console.log('not working');
+    }
+    try {
+        const path3 = path.resolve('./taskdefinition.js')
+        console.log(path3);
+        const getPreparedTaskDefinition = require(path3);
+        console.log('working');
+    } catch (e) {
+        console.log('not working');
+    }
+    try {
+        const path3 = path.resolve('.', 'taskdefinition.js')
+        console.log(path3);
+        const getPreparedTaskDefinition = require(path3);
+        console.log('working');
+    } catch (e) {
+        console.log('not working');
+    }
+
+    throw new Error('stop here')
     const getPreparedTaskDefinition = require(pathToFile);
 
     if (typeof getPreparedTaskDefinition !== 'function') {
