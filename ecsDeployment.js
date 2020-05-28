@@ -20,7 +20,7 @@ async function updateTaskDefinition(environment, version) {
     console.log('Trying to register new revision for task definition');
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
 
-    const pathToFile = path.resolve('.', 'taskdefinition.js')
+    const pathToFile = path.resolve('./taskdefinition.js')
     console.log('Task definition is supposed to be located at', pathToFile);
 
     const getPreparedTaskDefinition = require(pathToFile);
