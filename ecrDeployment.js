@@ -10,7 +10,7 @@ const ACCOUNT_NUMBER = process.env.AWS_ACCOUNT_NUMBER;
  * @return {string}
  */
 function getImageName(department, service, environment) {
-    return `${department}-service-${service}-${environment}`;
+    return `${department}-service-${service}-${environment === 'local' ? 'dev' : environment}`;
 }
 
 /**
