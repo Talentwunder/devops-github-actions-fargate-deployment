@@ -6,7 +6,7 @@
   "author": "Lukas <meusel.lukas@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.4",
+    "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4",
     "aws-sdk": "^2.683.0"
   },
