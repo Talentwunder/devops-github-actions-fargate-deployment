@@ -4,7 +4,7 @@ const ACCOUNT_NUMBER = process.env.AWS_ACCOUNT_NUMBER;
 
 /**
  *
- * @param department {"saas" | "ai"}
+ * @param department {"saas" | "ai" | "scraper"}
  * @param service {string}
  * @param environment {"dev" | "beta" | "prod"}
  * @return {string}
@@ -54,13 +54,14 @@ async function loginToECR(region) {
 /**
  *
  * @param region {string}
- * @param department {"saas" | "ai"}
+ * @param department {"saas" | "ai" | "scraper"}
  * @param service {string}
  * @param environment {"dev" | "beta" | "prod"}
  * @param version {string}
+ * @param shouldBuildImage {boolean}
  * @return {Promise<void>}
  */
-async function buildImage({ region, department, service, environment, version }) {
+async function buildImage({ region, department, service, environment, version, shouldBuildImage }) {
     console.log('Starting to build docker image...');
 
     const imageName = getImageName(department, service, environment);
@@ -68,9 +69,23 @@ async function buildImage({ region, department, service, environment, version })
     const ecrRepo = getECRRepository(region, imageName);
     console.log('ECR repo is: ', ecrRepo);
 
+    if (shouldBuildImage) {
+        buildAndPushImage(imageName, ecrRepo, version)
+    } else {
+        pushImage(imageName, ecrRepo, version)
+    }   
+}
+
+async function buildAndPushImage({ imageName, ecrRepo, version }) {
+    console.log('Starting to build docker image...');
     await exec.exec(`docker build -t ${imageName} .`)
     console.log('Image built!');
 
+    pushImage(imageName, ecrRepo, version)
+}
+
+async function pushImage({ imageName, ecrRepo, version }) {
+    console.log('Rename docker image...');
     await exec.exec(`docker tag ${imageName}:latest ${ecrRepo}:${version}`);
 
     console.log('Pushing to ECR...');
@@ -78,8 +93,8 @@ async function buildImage({ region, department, service, environment, version })
     console.log('Successfully pushed to ECR');
 }
 
-exports.deployToECR = async function({ version, environment, service, department}) {
+exports.deployToECR = async function({ version, environment, service, department, shouldBuildImage }) {
     const region = 'eu-central-1';
     await loginToECR(region);
-    await buildImage({ region, version, environment, service, department })
+    await buildImage({ region, version, environment, service, department, shouldBuildImage })
 }
