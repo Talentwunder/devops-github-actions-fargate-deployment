@@ -76,7 +76,7 @@ async function buildImage({ region, department, service, environment, version, s
     }   
 }
 
-async function buildAndPushImage({ service, ecrRepo, version }) {
+async function buildAndPushImage(service, ecrRepo, version) {
     console.log('Starting to build docker image...');
     await exec.exec(`docker build -t ${service} .`)
     console.log('Image built!');
@@ -84,7 +84,7 @@ async function buildAndPushImage({ service, ecrRepo, version }) {
     await pushImage(service, ecrRepo, version)
 }
 
-async function pushImage({ service, ecrRepo, version }) {
+async function pushImage(service, ecrRepo, version) {
     console.log(`Rename docker image from ${service}:latest to ${ecrRepo}:${version}`);
     await exec.exec(`docker tag ${service}:latest ${ecrRepo}:${version}`);
 
