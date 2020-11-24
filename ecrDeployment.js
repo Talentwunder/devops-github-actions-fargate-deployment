@@ -70,9 +70,9 @@ async function buildImage({ region, department, service, environment, version, s
     console.log('ECR repo is: ', ecrRepo);
 
     if (shouldBuildImage) {
-        buildAndPushImage(service, ecrRepo, version)
+        await buildAndPushImage(service, ecrRepo, version)
     } else {
-        pushImage(service, ecrRepo, version)
+        await pushImage(service, ecrRepo, version)
     }   
 }
 
@@ -81,7 +81,7 @@ async function buildAndPushImage({ service, ecrRepo, version }) {
     await exec.exec(`docker build -t ${service} .`)
     console.log('Image built!');
 
-    pushImage(service, ecrRepo, version)
+    await pushImage(service, ecrRepo, version)
 }
 
 async function pushImage({ service, ecrRepo, version }) {

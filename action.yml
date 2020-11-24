@@ -20,12 +20,16 @@ inputs:
     required: true
   withLocal:
     description: 'Defines whether a local image should also be tagged in the dev environment'
-    required: true
+    required: false
     default: 'true'
   taskDefinitionPath:
     description: 'Defines where the task definition is located'
     required: true
     default: 'taskdefinition.js'
+  shouldBuildImage:
+    description: 'Defines if the docker image should be build or already exists'
+    required: false
+    default: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
