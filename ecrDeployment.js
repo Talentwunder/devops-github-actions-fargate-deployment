@@ -70,23 +70,23 @@ async function buildImage({ region, department, service, environment, version, s
     console.log('ECR repo is: ', ecrRepo);
 
     if (shouldBuildImage) {
-        buildAndPushImage(imageName, ecrRepo, version)
+        buildAndPushImage(service, ecrRepo, version)
     } else {
-        pushImage(imageName, ecrRepo, version)
+        pushImage(service, ecrRepo, version)
     }   
 }
 
-async function buildAndPushImage({ imageName, ecrRepo, version }) {
+async function buildAndPushImage({ serviceName, ecrRepo, version }) {
     console.log('Starting to build docker image...');
-    await exec.exec(`docker build -t ${imageName} .`)
+    await exec.exec(`docker build -t ${serviceName} .`)
     console.log('Image built!');
 
-    pushImage(imageName, ecrRepo, version)
+    pushImage(serviceName, ecrRepo, version)
 }
 
-async function pushImage({ imageName, ecrRepo, version }) {
+async function pushImage({ serviceName, ecrRepo, version }) {
     console.log('Rename docker image...');
-    await exec.exec(`docker tag ${imageName}:latest ${ecrRepo}:${version}`);
+    await exec.exec(`docker tag ${serviceName}:latest ${ecrRepo}:${version}`);
 
     console.log('Pushing to ECR...');
     await exec.exec(`docker push ${ecrRepo}:${version}`);
