@@ -1,6 +1,6 @@
 {
   "name": "devops-github-actions-fargate-deployment",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "index.js",
   "repository": "https://github.com/Talentwunder/devops-github-actions-fargate-deployment.git",
   "author": "Lukas <meusel.lukas@gmail.com>",
