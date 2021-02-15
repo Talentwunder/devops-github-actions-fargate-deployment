@@ -16,45 +16,6 @@ function getImageName(department, service, environment) {
 /**
  *
  * @param region {string}
- * @param imageName {string}
- * @return {string}
- */
-function getECRRepository(region, imageName) {
-    return `${ACCOUNT_NUMBER}.dkr.ecr.${region}.amazonaws.com/${imageName}`;
-}
-
-/**
- *
- * @param region {string}
- * @return {Promise<void>}
- */
-async function loginToECR(region) {
-    console.log('Getting login in to ECR...');
-    let doLoginStdout = '';
-    let doLoginStderr = '';
-
-    const exitCode = await exec.exec(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${ACCOUNT_NUMBER}.dkr.ecr.${region}.amazonaws.com`, [],{
-        silent: false,
-        listeners: {
-            stdout: (data) => {
-                doLoginStdout += data.toString();
-            },
-            stderr: (data) => {
-                doLoginStderr += data.toString();
-            }
-        }
-    })
-    if (!!exitCode) {
-        throw new Error('Could not login: ' + doLoginStderr);
-    }
-    console.log('Using credentials to login...');
-    await exec.exec(doLoginStdout);
-    console.log('Logged in!');
-}
-
-/**
- *
- * @param region {string}
  * @param department {"saas" | "ai" | "scraper"}
  * @param service {string}
  * @param environment {"dev" | "beta" | "prod"}
@@ -62,12 +23,12 @@ async function loginToECR(region) {
  * @param shouldBuildImage {boolean}
  * @return {Promise<void>}
  */
-async function buildImage({ region, department, service, environment, version, shouldBuildImage }) {
+async function buildImage({ ecrRegistry, department, service, environment, version, shouldBuildImage }) {
     console.log('Starting to build docker image...');
 
     const imageName = getImageName(department, service, environment);
     console.log('Image name is: ', imageName);
-    const ecrRepo = getECRRepository(region, imageName);
+    const ecrRepo = `${ecrRegistry}/${imageName}`;
     console.log('ECR repo is: ', ecrRepo);
 
     if (shouldBuildImage) {
@@ -94,8 +55,6 @@ async function pushImage(service, ecrRepo, version) {
     console.log('Successfully pushed to ECR');
 }
 
-exports.deployToECR = async function({ version, environment, service, department, shouldBuildImage }) {
-    const region = 'eu-central-1';
-    await loginToECR(region);
-    await buildImage({ region, version, environment, service, department, shouldBuildImage })
+exports.deployToECR = async function({ ecrRegistry, version, environment, service, department, shouldBuildImage }) {
+    await buildImage({ ecrRegistry, version, environment, service, department, shouldBuildImage })
 }

@@ -30,6 +30,10 @@ inputs:
     description: 'Defines if the docker image should be build or already exists'
     required: false
     default: false
+  ecrRegistry:
+    description: 'Defines the ECR registry'
+    required: true
+    
 runs:
   using: 'node12'
   main: 'dist/index.js'
