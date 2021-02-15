@@ -34,7 +34,7 @@ async function loginToECR(region) {
     let doLoginStderr = '';
 
     const exitCode = await exec.exec(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${ACCOUNT_NUMBER}.dkr.ecr.${region}.amazonaws.com`, [],{
-        silent: true,
+        silent: false,
         listeners: {
             stdout: (data) => {
                 doLoginStdout += data.toString();
