@@ -12,6 +12,7 @@ async function run() {
         const withLocalString = core.getInput('withLocal');
         const taskDefinitionPath = core.getInput('taskDefinitionPath');
         const ecrRegistry = core.getInput('ecrRegistry');
+        const shouldBuildImage = core.getInput('shouldBuildImage');
 
         const taskCount = Number(taskCountString);
         const withLocal = withLocalString === 'true' || withLocalString === true;
@@ -29,12 +30,12 @@ async function run() {
         console.log('ECR Registry: ', ecrRegistry);
         console.log('\n\n');
 
-        await deployToECR({ ecrRegistry, department, service, environment, version });
+        await deployToECR({ ecrRegistry, department, service, environment, version, shouldBuildImage });
         await deployToFargate({ service, department, version, taskCount, environment, taskDefinitionPath })
 
         if (shouldDeployLocal) {
             console.log('\n\n\n', 'DEPLOYING FOR LOCAL ENVIRONMENT AS WELL');
-            await deployToECR({ ecrRegistry, department, service, environment, version: 'local' });
+            await deployToECR({ ecrRegistry, department, service, environment, version: 'local', shouldBuildImage });
             await deployToFargate({ service, department, version: 'local', taskCount: 1, environment: 'local', taskDefinitionPath })
         }
     } catch (e) {
