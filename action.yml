@@ -33,6 +33,10 @@ inputs:
   ecrRegistry:
     description: 'Defines the ECR registry'
     required: true
+  clusterPrefix:
+    description: 'The prefix of the ECS cluster where the service should be deployed'
+    required: true
+    default: 'saas'
 
 runs:
   using: 'node12'

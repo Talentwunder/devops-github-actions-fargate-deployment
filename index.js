@@ -13,6 +13,7 @@ async function run() {
         const taskDefinitionPath = core.getInput('taskDefinitionPath');
         const ecrRegistry = core.getInput('ecrRegistry');
         const shouldBuildImage = core.getInput('shouldBuildImage');
+        const clusterPrefix = core.getInput('clusterPrefix');
 
         const taskCount = Number(taskCountString);
         const withLocal = withLocalString === 'true' || withLocalString === true;
@@ -26,17 +27,18 @@ async function run() {
         console.log('Task Count:\t', taskCount);
         console.log('Environment:\t', environment);
         console.log('withLocal:\t', withLocal);
+        console.log('clusterPrefix:\t', clusterPrefix);
         console.log('Task definition path: ', taskDefinitionPath);
         console.log('ECR Registry: ', ecrRegistry);
         console.log('\n\n');
 
         await deployToECR({ ecrRegistry, department, service, environment, version, shouldBuildImage });
-        await deployToFargate({ service, department, version, taskCount, environment, taskDefinitionPath })
+        await deployToFargate({ service, department, version, taskCount, environment, taskDefinitionPath, clusterPrefix})
 
         if (shouldDeployLocal) {
             console.log('\n\n\n', 'DEPLOYING FOR LOCAL ENVIRONMENT AS WELL');
             await deployToECR({ ecrRegistry, department, service, environment, version: 'local', shouldBuildImage });
-            await deployToFargate({ service, department, version: 'local', taskCount: 1, environment: 'local', taskDefinitionPath })
+            await deployToFargate({ service, department, version: 'local', taskCount: 1, environment: 'local', taskDefinitionPath, clusterPrefix })
         }
     } catch (e) {
         core.setFailed(e.message);
