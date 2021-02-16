@@ -32,6 +32,15 @@ Supported values:
  - `saas`
  - `ai`
 
+### `clusterPrefix`
+
+**Required** Specify which cluster prefix to be used.
+Supported values:
+ - `saas`
+ - `ai`
+
+Defaults to `saas`
+
 ### `taskCount`
 
 **Required** How many tasks should run in parallel as part of the service.
@@ -63,6 +72,7 @@ with:
   version: '1.0.2'
   environment: 'dev'
   department: 'saas'
+  clusterPrefix: 'saas'
   taskCount: 1
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

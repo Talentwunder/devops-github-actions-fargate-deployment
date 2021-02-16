@@ -3,8 +3,8 @@ const fs = require('fs');
 const { ECS } = require('aws-sdk');
 const ecs = new ECS({ region: 'eu-central-1' });
 
-function getClusterName(environment) {
-    return `saas-cluster-${environment}`;
+function getClusterName(clusterPrefix, environment) {
+    return `${clusterPrefix}-cluster-${environment}`;
 }
 
 function getServiceName(department, service, environment) {
@@ -61,9 +61,10 @@ async function updateService({
                                  version,
                                  updatedTaskDefinition,
                                  taskCount,
+	                         clusterPrefix,
                              }) {
     const serviceName = getServiceName(department, service, environment);
-    const clusterName = getClusterName(environment);
+    const clusterName = getClusterName(clusterPrefix, environment);
 
     console.log('Task definition family: ', updatedTaskDefinition.family);
     const taskDefinitionRevision = `${updatedTaskDefinition.family}:${updatedTaskDefinition.revision}`;
@@ -98,12 +99,14 @@ exports.deployToFargate = async function ({
                                               environment,
                                               taskCount,
                                               taskDefinitionPath,
+	                                      clusterPrefix,
                                           }) {
 
     console.log('Initiating deployment to fargate...');
     console.log('Department:', department);
     console.log('Service:', service);
     console.log('Version:', version);
+    console.log('ClusterPrefix:', clusterPrefix);
     console.log(`Environment for service "${service}" is "${environment}" with version "${version}"`);
 
     const taskDefinition = await updateTaskDefinition(taskDefinitionPath, environment, version);
@@ -114,5 +117,6 @@ exports.deployToFargate = async function ({
         version,
         updatedTaskDefinition: taskDefinition,
         taskCount,
+        clusterPrefix,
     });
 };
