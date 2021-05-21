@@ -23,7 +23,7 @@ function getImageName(department, service, environment) {
  * @param shouldBuildImage {boolean}
  * @return {Promise<void>}
  */
-async function buildImage({ ecrRegistry, department, service, environment, version, shouldBuildImage }) {
+async function buildImage({ ecrRegistry, department, service, environment, version, shouldBuildImage}) {
     console.log('Starting to build docker image...');
 
     const imageName = getImageName(department, service, environment);
@@ -35,12 +35,18 @@ async function buildImage({ ecrRegistry, department, service, environment, versi
         await buildAndPushImage(service, ecrRepo, version)
     } else {
         await pushImage(service, ecrRepo, version)
-    }   
+    }
+}
+
+function getAddGithubTokenEnvCommand() {
+    const accessToken = process.env.ACCESS_TOKEN;
+    return accessToken ? `--build-arg ACCESS_TOKEN=${accessToken}` : '';
 }
 
 async function buildAndPushImage(service, ecrRepo, version) {
     console.log('Starting to build docker image...');
-    await exec.exec(`docker build -t ${service} .`)
+    const addGithubTokenCommand = getAddGithubTokenEnvCommand();
+    await exec.exec(`docker build ${addGithubTokenCommand} -t ${service} .`)
     console.log('Image built!');
 
     await pushImage(service, ecrRepo, version)

@@ -1,6 +1,6 @@
 {
   "name": "devops-github-actions-fargate-deployment",
-  "version": "2.0",
+  "version": "3.5",
   "main": "index.js",
   "repository": "https://github.com/Talentwunder/devops-github-actions-fargate-deployment.git",
   "author": "Lukas <meusel.lukas@gmail.com>",
@@ -8,7 +8,9 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4",
-    "aws-sdk": "^2.843.0"
+    "@vercel/ncc": "^0.28.5",
+    "aws-sdk": "^2.843.0",
+    "ncc": "^0.3.6"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.22.3"
