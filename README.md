@@ -32,13 +32,6 @@ Supported values:
  - `saas`
  - `ai`
 
-### `clusterPrefix`
-
-**Required** Specify which cluster prefix to be used.
-Supported values:
- - `saas`
- - `ai`
-
 Defaults to `saas`
 
 ### `taskCount`
@@ -48,20 +41,38 @@ Defaults to `1`
 
 ### `environment`
 
-**Required** The referenced environment for the deployment
+**Required** The referenced environment for the deployment.
 Supported values:
  - `local`
  - `dev`
  - `beta`
  - `prod`
+
+### `clusterSuffix`
+
+**Optional** Should the cluster suffix differs with environment.
+Supported values:
+- `local`
+- `dev`
+- `beta`
+- `prod`
+- `io`
+
+### `clusterPrefix`
+
+**Optional** Should the cluster prefix differs with department.
+Supported values:
+- `saas`
+- `ai`
+- `scraper`
  
- ### `withLocal`
+### `withLocal`
  
- **Required** Defines whether a local image should also be tagged in the dev environment. Defaults to `true`.
+ **Optional** Defines whether a local image should also be tagged in the dev environment. Defaults to `false`.
 
 ### `taskDefinitionPath`
  
- **Required** Defines where the task definition file is located. Defaults to .`taskdefinition.js`
+ **Optional** Defines where the task definition file is located. Defaults to .`taskdefinition.js`
 
 ## Example usage
 
@@ -72,7 +83,6 @@ with:
   version: '1.0.2'
   environment: 'dev'
   department: 'saas'
-  clusterPrefix: 'saas'
   taskCount: 1
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
