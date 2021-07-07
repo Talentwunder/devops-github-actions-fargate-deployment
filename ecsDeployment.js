@@ -1,10 +1,10 @@
 const path = require('path');
 const fs = require('fs');
-const { ECS } = require('aws-sdk');
-const ecs = new ECS({ region: 'eu-central-1' });
+const {ECS} = require('aws-sdk');
+const ecs = new ECS({region: 'eu-central-1'});
 
-function getClusterName(clusterPrefix, environment) {
-    return `${clusterPrefix}-cluster-${environment}`;
+function getClusterName(clusterPrefix, cluster) {
+    return `${clusterPrefix}-cluster-${cluster}`;
 }
 
 function getServiceName(department, service, environment) {
@@ -15,10 +15,11 @@ function getServiceName(department, service, environment) {
  * Register the new version for the given environment
  * @param taskDefinitionPath {string}
  * @param environment {"local" | "dev" | "beta" | "prod"}
+ * @param clusterSuffix {"local" | "dev" | "beta" | "prod" | "io"}
  * @param version {string}
  * @returns {Promise<ECS.TaskDefinition>}
  */
-async function updateTaskDefinition(taskDefinitionPath, environment, version) {
+async function updateTaskDefinition(taskDefinitionPath, environment, clusterSuffix, version) {
     console.log('Trying to register new revision for task definition');
     console.log('Completing task definition with environment: ', environment, '\nand version: ', version);
 
@@ -30,7 +31,7 @@ async function updateTaskDefinition(taskDefinitionPath, environment, version) {
         throw new Error('Path to the task definition file must reference a file that default exports a function.');
     }
 
-    const params = getPreparedTaskDefinition(environment, version);
+    const params = getPreparedTaskDefinition(environment, clusterSuffix, version);
 
     // local environment uses dev ECR repository
     if (environment === 'local') {
@@ -38,7 +39,7 @@ async function updateTaskDefinition(taskDefinitionPath, environment, version) {
     }
 
     console.log('Revised task definition to be set looks like', JSON.stringify(params, undefined, 2));
-    const { taskDefinition } = await ecs.registerTaskDefinition(params)
+    const {taskDefinition} = await ecs.registerTaskDefinition(params)
         .promise();
     console.log('Successfully registered\n', JSON.stringify(taskDefinition, undefined, 2));
     return taskDefinition;
@@ -46,9 +47,11 @@ async function updateTaskDefinition(taskDefinitionPath, environment, version) {
 
 /**
  * Make the service aware of the updated task definition
- * @param department {"ai" | "saas"}
+ * @param department {"ai" | "saas" | "scraper"}
  * @param service {string}
  * @param environment {"local" | "dev" | "beta" | "prod"}
+ * @param clusterSuffix {"local" | "dev" | "beta" | "prod" | "io"}
+ * @param clusterPrefix {"ai" | "saas" | "scraper"}
  * @param version {string}
  * @param updatedTaskDefinition
  * @param taskCount {number} - how many tasks of a service should run in parallel
@@ -58,13 +61,14 @@ async function updateService({
                                  department,
                                  service,
                                  environment,
+                                 clusterSuffix,
+                                 clusterPrefix,
                                  version,
                                  updatedTaskDefinition,
                                  taskCount,
-	                         clusterPrefix,
                              }) {
     const serviceName = getServiceName(department, service, environment);
-    const clusterName = getClusterName(clusterPrefix, environment);
+    const clusterName = getClusterName(clusterPrefix, clusterSuffix);
 
     console.log('Task definition family: ', updatedTaskDefinition.family);
     const taskDefinitionRevision = `${updatedTaskDefinition.family}:${updatedTaskDefinition.revision}`;
@@ -77,7 +81,7 @@ async function updateService({
         desiredCount: taskCount,
     };
     console.log('\n\nParams\n', JSON.stringify(params, undefined, 2));
-    const { service: ecsService } = await ecs.updateService(params)
+    const {service: ecsService} = await ecs.updateService(params)
         .promise();
     console.log('Updating of service successful:', JSON.stringify(ecsService, undefined, 2));
 }
@@ -88,6 +92,8 @@ async function updateService({
  * @param version {string}
  * @param department {"saas" | "ai"}
  * @param environment {"local" | "dev" | "beta" | "prod"}
+ * @param clusterSuffix {"local" | "dev" | "beta" | "prod" | "io"}
+ * @param clusterPrefix {"ai" | "saas" | "scraper"}
  * @param taskCount {number} - how many tasks of a service should run in parallel
  * @param taskDefinitionPath {string}
  * @return {Promise<void>}
@@ -97,9 +103,10 @@ exports.deployToFargate = async function ({
                                               version,
                                               department,
                                               environment,
+                                              clusterSuffix,
+                                              clusterPrefix,
                                               taskCount,
                                               taskDefinitionPath,
-	                                      clusterPrefix,
                                           }) {
 
     console.log('Initiating deployment to fargate...');
@@ -108,15 +115,17 @@ exports.deployToFargate = async function ({
     console.log('Version:', version);
     console.log('ClusterPrefix:', clusterPrefix);
     console.log(`Environment for service "${service}" is "${environment}" with version "${version}"`);
+    console.log(`Will be deployed to "${clusterSuffix}" cluster`)
 
-    const taskDefinition = await updateTaskDefinition(taskDefinitionPath, environment, version);
+    const taskDefinition = await updateTaskDefinition(taskDefinitionPath, environment, clusterSuffix, version);
     await updateService({
         department,
         service,
         environment,
+        clusterSuffix,
+        clusterPrefix,
         version,
         updatedTaskDefinition: taskDefinition,
         taskCount,
-        clusterPrefix,
     });
 };
